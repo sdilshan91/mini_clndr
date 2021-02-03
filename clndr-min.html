@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://kylestetz.github.io/CLNDR/css/clndr.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.25.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.12.0/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clndr/1.5.1/clndr.min.js"></script>
+</head>
+<body>
+    <div class="block bg-gray">
+        <div class="inner">
+  
+          <div id="mini-clndr">
+            <script id="mini-clndr-template" type="text/template">
+  
+              <div class="controls">
+                <div class="clndr-previous-button">&lsaquo;</div><div class="month"><%= month %></div><div class="clndr-next-button">&rsaquo;</div>
+              </div>
+  
+              <div class="days-container">
+                <div class="days">
+                  <div class="headers">
+                    <% _.each(daysOfTheWeek, function(day) { %><div class="day-header"><%= day %></div><% }); %>
+                  </div>
+                  <% _.each(days, function(day) { %><div class="<%= day.classes %>" id="<%= day.id %>"><%= day.day %></div><% }); %>
+                </div>
+                <div class="events">
+                  <div class="headers">
+                    <div class="x-button">x</div>
+                    <div class="event-header">EVENTS</div>
+                  </div>
+                  <div class="events-list">
+                    <% _.each(eventsThisMonth, function(event) { %>
+                      <div class="event">
+                        <a href="<%= event.url %>"><%= moment(event.date).format('MMMM Do') %>: <%= event.title %></a>
+                      </div>
+                    <% }); %>
+                  </div>
+                </div>
+              </div>
+  
+            </script>
+          </div>
+  
+        </div>
+      </div>
+      <script type="text/javascript">
+      var clndr = {};
+
+$( function() {
+
+  // PARDON ME while I do a little magic to keep these events relevant for the rest of time...
+  var currentMonth = moment().format('YYYY-MM');
+  var nextMonth    = moment().add('month', 1).format('YYYY-MM');
+
+  var events = [
+    { date: currentMonth + '-' + '10', title: 'Persian Kitten Auction', location: 'Center for Beautiful Cats' },
+    { date: currentMonth + '-' + '19', title: 'Cat Frisbee', location: 'Jefferson Park' },
+    { date: currentMonth + '-' + '23', title: 'Kitten Demonstration', location: 'Center for Beautiful Cats' },
+    { date: nextMonth + '-' + '07',    title: 'Small Cat Photo Session', location: 'Center for Cat Photography' }
+  ];
+
+  $('#mini-clndr').clndr({
+    template: $('#mini-clndr-template').html(),
+    events: events,
+    clickEvents: {
+      click: function(target) {
+        if(target.events.length) {
+          var daysContainer = $('#mini-clndr').find('.days-container');
+          daysContainer.toggleClass('show-events', true);
+          $('#mini-clndr').find('.x-button').click( function() {
+            daysContainer.toggleClass('show-events', false);
+          });
+        }
+      }
+    },
+    adjacentDaysChangeMonth: true,
+    forceSixRows: true
+  });
+});
+    </script>
+</body>
+</html>
